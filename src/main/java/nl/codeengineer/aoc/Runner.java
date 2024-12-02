@@ -13,7 +13,7 @@ public class Runner {
 
     public static void main(String[] args) throws IOException {
         Runner runner = new Runner();
-        runner.runYear("2024", "01");
+        runner.runYear("2024", "02");
     }
 
 
@@ -34,7 +34,7 @@ public class Runner {
                 Object res2 = daySolver.part2();
                 long time2 = System.nanoTime() - start;
 
-                System.out.printf("|%5s | %20s | %20s | %10.2f ms | %10.2f ms |%n", daySolver.getClass().getSimpleName().replaceAll("Day", ""), res1, res2, time1 / 1000.0 / 1000.0, time2 / 1000.0 / 1000.0);
+                System.out.printf("|%5s | %20s | %20s | %10.2f ms | %10.2f ms |%n", daySolver.getClass().getSimpleName().replace("Day", ""), res1, res2, time1 / 1000.0 / 1000.0, time2 / 1000.0 / 1000.0);
            //}
         }
         System.out.println("--------------------------------------------------------------------------------------");
@@ -47,7 +47,9 @@ public class Runner {
     private List<Object> getDaySolversToRun(String year, String day) {
         final String searchDay = day == null ? "" : day;
 
-        InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(PACKAGE.replace("[.]", "/") + "/aoc" + year);
+        var location = PACKAGE.replaceAll("[.]", "/") + "/aoc" + year;
+
+        InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(location);
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 
         return reader.lines()
