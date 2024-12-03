@@ -13,7 +13,7 @@ public class Runner {
 
     public static void main(String[] args) throws IOException {
         Runner runner = new Runner();
-        runner.runYear("2024", "02");
+        runner.runYear("2024", "03");
     }
 
 
