@@ -62,7 +62,6 @@ public class Day03 implements AocSolver {
                     break;
                 }
 
-
                 dontPos = input.indexOf("don't()", pos);
                 if (dontPos == -1) {
                     dontPos = Integer.MAX_VALUE;
