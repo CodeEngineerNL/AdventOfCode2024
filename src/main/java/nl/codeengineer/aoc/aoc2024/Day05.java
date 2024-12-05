@@ -11,7 +11,6 @@ public class Day05 implements AocSolver {
 
     Map<Integer, Set<Integer>> ordering = new HashMap<>();
 
-
     public Object part1() throws IOException {
         var updates = getInput();
 
@@ -34,20 +33,31 @@ public class Day05 implements AocSolver {
 
         for (List<Integer> update: updates) {
             if (!isValidUpdate(update)) {
-                update = fixList(update);
-
-                // why? 
-                while (!isValidUpdate(update)) {
-                    update = fixList(update);
-                }
+                update.sort(this::compare);
 
                 var m = update.get((update.size() / 2));
                 total += m;
             }
         }
 
-
         return total;
+    }
+
+    private int compare(Integer a, Integer b) {
+        if (a.equals(b)) {
+            return 0;
+        }
+
+        var afters = ordering.get(a);
+        if (afters == null) {
+            return -1;
+        }
+
+        if (afters.contains(b)) {
+            return 1;
+        } else {
+            return -1;
+        }
     }
 
     public boolean isValidUpdate(List<Integer> check) {
@@ -67,34 +77,6 @@ public class Day05 implements AocSolver {
         }
 
         return true;
-    }
-
-    public List<Integer> fixList(List<Integer> check) {
-        var update = check.reversed();
-
-
-        for (int i = 0; i < update.size() - 1; i++) {
-            Set<Integer> o = ordering.get(update.get(i));
-            if (o == null) {
-                continue;
-            }
-
-            for (int j = i; j < update.size(); j++) {
-                if (o.contains(update.get(j))) {
-                   switchItems(update, i, j);
-                   return update.reversed();
-                }
-            }
-        }
-
-        return update.reversed();
-    }
-
-
-    public void switchItems(List<Integer> items, int x, int y) {
-        var b = items.get(x);
-        items.remove(x);
-        items.add(y, b);
     }
 
     public List<List<Integer>> getInput() throws IOException {
