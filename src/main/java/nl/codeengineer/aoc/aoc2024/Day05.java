@@ -34,6 +34,9 @@ public class Day05 implements AocSolver {
 
         for (List<Integer> update: updates) {
             if (!isValidUpdate(update)) {
+                update = fixList(update);
+
+                // why? 
                 while (!isValidUpdate(update)) {
                     update = fixList(update);
                 }
