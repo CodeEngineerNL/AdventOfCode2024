@@ -60,10 +60,18 @@ public class Day07 implements AocSolver {
 
 
     public long solve(Equ equ, int i, Op op, long current, boolean doConcat) {
-        var result = switch (op) {
+        long result = switch (op) {
             case MUL -> current * equ.numbers[i];
             case PLUS -> current + equ.numbers[i];
-            case CONCAT -> Long.parseLong(String.valueOf(current).concat(String.valueOf(equ.numbers[i])));
+            case CONCAT -> {
+                // Long.parseLong(String.valueOf(current).concat(String.valueOf(equ.numbers[i])));
+                long pow = 10;
+                while (equ.numbers[i] > pow) {
+                    pow *= 10;
+                }
+
+                yield current * pow + equ.numbers[i];
+            }
         };
 
         if (i == equ.numbers.length - 1) {
