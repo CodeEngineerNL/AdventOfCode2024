@@ -66,9 +66,7 @@ public class Day08 implements AocSolver {
                 var antiNode1 = new MyPoint(node1.x + xdiff, node1.y + ydiff);
                 if (!isLine && isValidCoord(antiNode1)) {
                     antiNodes.add(antiNode1);
-                }
-
-                while (isLine && isValidCoord(antiNode1)) {
+                } else while (isValidCoord(antiNode1)) {
                     antiNodes.add(antiNode1);
                     antiNode1 = new MyPoint(antiNode1.x + xdiff, antiNode1.y + ydiff);
 
@@ -78,9 +76,7 @@ public class Day08 implements AocSolver {
 
                 if (!isLine && isValidCoord(antiNode2)) {
                     antiNodes.add(antiNode2);
-                }
-
-                while (isLine && isValidCoord(antiNode2)) {
+                } else while (isValidCoord(antiNode2)) {
                     antiNodes.add(antiNode2);
                     antiNode2 = new MyPoint(antiNode2.x - xdiff, antiNode2.y - ydiff);
                 }
@@ -99,8 +95,8 @@ public class Day08 implements AocSolver {
         HashMap<String, List<MyPoint>> result = new HashMap<>();
 
         this.height = lines.size();
-        this.width = lines.get(0).length();
-
+        this.width = lines.getFirst().length();
+        
         for (int y = 0; y < height; y++) {
             String line = lines.get(y);
             for (int x = 0; x < width; x++) {
