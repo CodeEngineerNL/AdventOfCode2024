@@ -18,14 +18,14 @@ public class Day06 implements AocSolver {
     int width;
     int height;
 
-    int posx;
-    int posy;
+    int startX;
+    int startY;
 
-    int dir;
+    int startDir;
 
     char[] dirs = {'^', '>', 'v', '<'};
 
-    record Step(int x, int y, int dir){};
+    record Step(int x, int y, int dir){}
 
     List<Step> taken = new ArrayList<>();
 
@@ -37,11 +37,16 @@ public class Day06 implements AocSolver {
         var map = getInput();
         this.startMap = cloneNap(map);
 
+        int posx = startX;
+        int posy = startY;
+        int dir = startDir;
+
         var count = 1;
+
+        map[posy][posx] = 'X';
 
         while (true) {
             var step = new Step(posx, posy, dir);
-            taken.add(step);
 
             var oldx = posx;
             var oldy = posy;
@@ -54,6 +59,7 @@ public class Day06 implements AocSolver {
             }
 
             if (!isValidCoord(posx, posy)) {
+                taken.add(step);
                 break;
             }
 
@@ -61,15 +67,14 @@ public class Day06 implements AocSolver {
                 posx = oldx;
                 posy = oldy;
 
-                this.dir = (this.dir + 1) % dirs.length;
+                dir = (dir + 1) % dirs.length;
             } else {
+                taken.add(step);
                 if (map[posy][posx] != 'X') {
                     map[posy][posx] = 'X';
                     count++;
                 }
             }
-
-            //printMap(map);
         }
 
         return count;
@@ -79,10 +84,7 @@ public class Day06 implements AocSolver {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 char c = map[y][x];
-                if (x == posx && y == posy) {
-                    c = this.dirs[this.dir];
-                }
-                if (obs.x == x && obs.y == y) {
+                if (obs != null && obs.x == x && obs.y == y) {
                     c = 'O';
                 }
 
@@ -92,43 +94,38 @@ public class Day06 implements AocSolver {
         }
 
         System.out.println();
-        System.out.println();
     }
 
-
-    // 1722 too high
     public Object part2() throws IOException {
+
+        record MyPoint(int x, int y) {}
+        Set<MyPoint> obstacles = new HashSet<>();
 
         var loopCount = 0;
 
         for (int i =1 ; i < taken.size(); i++) {
             var map = cloneNap(startMap);
 
-
-            Step start = taken.get(i - 1);
+            Step start = taken.getFirst();
 
             Set<Step> seen = new HashSet<>();
 
-            for (int j = 0; j < i - 1; j++) {
-                var step = taken.get(j);
-                map[step.y][step.x] = dirs[step.dir];
-                seen.add(step);
+            int posx = start.x;
+            int posy = start.y;
+            int dir = start.dir;
+
+            var obstacle = new MyPoint(taken.get(i).x, taken.get(i).y);
+            if (obstacles.contains(obstacle)) {
+                continue;
             }
+            obstacles.add(obstacle);
 
-            //printMap(map);
-
-            posx = start.x;
-            posy = start.y;
-            dir = start.dir;
-
-            var obstacle = taken.get(i);
             map[obstacle.y][obstacle.x] = '#';
 
             while (true) {
-                printMap(map, obstacle);
                 var step = new Step(posx, posy, dir);
                 if (seen.contains(step)) {
-                    printMap(startMap, obstacle);
+                    obstacles.add(obstacle);
                     loopCount++;
                     break;
                 }
@@ -151,13 +148,14 @@ public class Day06 implements AocSolver {
                     posx = oldx;
                     posy = oldy;
 
-                    this.dir = (this.dir + 1) % dirs.length;
+                    dir = (dir + 1) % dirs.length;
+                    map[posy][posx] = dirs[dir];
                 } else {
                     seen.add(step);
                 }
+                map[posy][posx] = dirs[dir];
             }
         }
-
 
         return loopCount;
     }
@@ -173,7 +171,7 @@ public class Day06 implements AocSolver {
     }
 
     public char[][] getInput() throws IOException {
-        var lines = Files.readAllLines(Path.of("inputs", "day06-test.txt"));
+        var lines = Files.readAllLines(Path.of("inputs", "day06.txt"));
 
         this.height = lines.size();
         this.width = lines.get(0).length();
@@ -186,17 +184,16 @@ public class Day06 implements AocSolver {
                 var c =  line.charAt(x);
 
                 if ("<^>v".contains(c + "")) {
-                    //result[y][x] = 'X';
-
-                    this.posx = x;
-                    this.posy = y;
+                    this.startX = x;
+                    this.startY= y;
 
                     for (int i = 0; i < dirs.length; i++) {
                         if (dirs[i] == c) {
-                            dir = i;
+                            this.startDir = i;
                         }
                     }
                 }
+
                 result[y][x] = c;
             }
         }
